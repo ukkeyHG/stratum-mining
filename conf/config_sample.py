@@ -12,7 +12,7 @@ You NEED to set the parameters in BASIC SETTINGS
 CENTRAL_WALLET = 'set_valid_addresss_in_config!'                # Local coin address where money goes
 
 COINDAEMON_TRUSTED_HOST = 'localhost'
-COINDAEMON_TRUSTED_PORT = 28332
+COINDAEMON_TRUSTED_PORT = 48887
 COINDAEMON_TRUSTED_USER = 'user'
 COINDAEMON_TRUSTED_PASSWORD = 'somepassword'
 
@@ -22,7 +22,7 @@ COINDAEMON_TRUSTED_PASSWORD = 'somepassword'
 # scrypt, sha256d, scrypt-jane, skeinhash, quark and riecoin
 # If the option does not meet either of these criteria stratum defaults to scrypt
 # For Coins which support TX Messages please enter yes in the TX selection
-COINDAEMON_ALGO = 'riecoin'
+COINDAEMON_ALGO = 'yescrypt_cryply'
 COINDAEMON_TX = 'no'
 
 # ******************** BASIC SETTINGS ***************
@@ -139,7 +139,7 @@ INSTANCE_ID = 31                # Used for extranonce and needs to be 0-31
 
 # ******************** Pool Difficulty Settings *********************
 VDIFF_X2_TYPE = True            # Powers of 2 e.g. 2,4,8,16,32,64,128,256,512,1024
-VDIFF_FLOAT = False             # Use float difficulty
+VDIFF_FLOAT = True              # Use float difficulty
 
 # Pool Target (Base Difficulty)
 POOL_TARGET = 4                 # Pool-wide difficulty target int >= 1
