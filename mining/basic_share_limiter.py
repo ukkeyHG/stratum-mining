@@ -119,7 +119,7 @@ class BasicShareLimiter(object):
         if (avg > self.tmax and current_difficulty > settings.VDIFF_MIN_TARGET):
             # For fractional -0.1 ddiff's just drop by 1
             if settings.VDIFF_X2_TYPE:
-                ddiff = 0.5
+                ddiff = 0.75
                 # Don't drop below POOL_TARGET
                 if (ddiff * current_difficulty) < settings.VDIFF_MIN_TARGET:
                     ddiff = settings.VDIFF_MIN_TARGET / current_difficulty
@@ -132,7 +132,7 @@ class BasicShareLimiter(object):
         elif avg < self.tmin:
             # For fractional 0.1 ddiff's just up by 1
             if settings.VDIFF_X2_TYPE:
-                ddiff = 2
+                ddiff = 1.5
                 # Don't go above LITECOIN or VDIFF_MAX_TARGET            
                 if settings.USE_COINDAEMON_DIFF:
                     self.update_litecoin_difficulty()
