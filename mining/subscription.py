@@ -5,6 +5,9 @@ import lib.settings as settings
 import lib.logger
 log = lib.logger.get_logger('subscription')
 
+import Cache
+cache = Cache.Cache()
+
 class MiningSubscription(Subscription):
     '''This subscription object implements
     logic for broadcasting new jobs to the clients.'''
@@ -50,11 +53,23 @@ class MiningSubscription(Subscription):
         except Exception:
             log.error("Template not ready yet")
             return result
-        
+
+        # Welcome Message
+        client_msg = cache.get('msg_welcome')
+        if client_msg is not None:
+            self.connection_ref().rpc('client.show_message', [ "********************************************************", ])
+            self.connection_ref().rpc('client.show_message', [ client_msg, ])
+            self.connection_ref().rpc('client.show_message', [ "********************************************************", ])
+
         # Force set higher difficulty
         self.connection_ref().rpc('mining.set_difficulty', [settings.POOL_TARGET, ], is_notification=True)
         # self.connection_ref().rpc('client.get_version', [])
-        
+
+        session = self.connection_ref().get_session()
+        # u_agent, u_ver = ( session['useragent'].split("/") )
+        log.info("User-Agent: %s", session['useragent'] )
+        log.info("Client IP : %s", self.connection_ref()._get_ip() )
+
         # Force client to remove previous jobs if any (eg. from previous connection)
         clean_jobs = True
         self.emit_single(job_id, prevhash, coinb1, coinb2, merkle_branch, version, nbits, ntime, True)

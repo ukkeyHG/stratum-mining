@@ -10,7 +10,10 @@ from lib.exceptions import SubmitException
 import json
 import lib.logger
 log = lib.logger.get_logger('mining')
-                
+
+import Cache
+cache = Cache.Cache()
+
 class MiningService(GenericService):
     '''This service provides public API for Stratum mining proxy
     or any Stratum-compatible miner software.
@@ -109,6 +112,7 @@ class MiningService(GenericService):
         session = self.connection_ref().get_session()
         session['extranonce1'] = extranonce1
         session['difficulty'] = settings.POOL_TARGET  # Following protocol specs, default diff is 1
+        session['useragent'] = args[0]   # set the client user agent
         return Pubsub.subscribe(self.connection_ref(), MiningSubscription()) + (extranonce1_hex, extranonce2_size)
         
     def submit(self, worker_name, work_id, extranonce2, ntime, nonce):
@@ -196,6 +200,11 @@ class MiningService(GenericService):
             # to result and report it to share manager
             on_submit.addCallback(Interfaces.share_manager.on_submit_block,
                 worker_name, block_header, block_hash, submit_time, ip, share_diff)
+
+        # send message to client miner
+        client_msg = cache.get('msg_submit')
+        if client_msg is not None:
+            self.connection_ref().rpc('client.show_message', [ client_msg, ])
 
         return True
             
