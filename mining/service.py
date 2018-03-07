@@ -165,6 +165,11 @@ class MiningService(GenericService):
                 log.debug("Clearing worker stats for: %s" % worker_name)
             (valid, invalid, is_banned, last_ts) = (0, 0, is_banned, Interfaces.timestamper.time())
 
+        # send message to client miner
+        client_msg = cache.get('msg_submit')
+        if client_msg is not None:
+            self.connection_ref().rpc('client.show_message', [ client_msg, ])
+
         log.debug("%s (%d, %d, %s, %s, %d) %0.2f%% work_id(%s) job_id(%s) diff(%f)" % (worker_name, valid, invalid, is_banned, is_ext_diff, last_ts, percent, work_id, job_id, difficulty))
         if not is_ext_diff:    
             Interfaces.share_limiter.submit(self.connection_ref, job_id, difficulty, submit_time, worker_name)
@@ -200,11 +205,6 @@ class MiningService(GenericService):
             # to result and report it to share manager
             on_submit.addCallback(Interfaces.share_manager.on_submit_block,
                 worker_name, block_header, block_hash, submit_time, ip, share_diff)
-
-        # send message to client miner
-        client_msg = cache.get('msg_submit')
-        if client_msg is not None:
-            self.connection_ref().rpc('client.show_message', [ client_msg, ])
 
         return True
             
